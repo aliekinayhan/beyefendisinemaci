@@ -1,0 +1,24 @@
+package com.beyefendisinemaci.beyefendisinemaci.movie.dto.response;
+
+import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class MovieResponseDto {
+
+    private UUID id;
+    private String title;
+    private String posterUrl;
+    private String videoUrl;
+    private String genre;
+    private Integer releaseYear;
+    private String review;
+}
