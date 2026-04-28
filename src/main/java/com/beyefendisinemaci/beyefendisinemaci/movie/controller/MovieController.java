@@ -1,6 +1,7 @@
 package com.beyefendisinemaci.beyefendisinemaci.movie.controller;
 
-import com.beyefendisinemaci.beyefendisinemaci.movie.entity.Movie;
+import com.beyefendisinemaci.beyefendisinemaci.movie.dto.request.MovieRequestDto;
+import com.beyefendisinemaci.beyefendisinemaci.movie.dto.response.MovieResponseDto;
 import com.beyefendisinemaci.beyefendisinemaci.movie.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,27 +16,27 @@ public class MovieController {
     private final MovieService service;
 
     @GetMapping()
-    public List<Movie> getAllMovies() {
+    public List<MovieResponseDto> getAllMovies() {
         return service.getAllMovies();
     }
 
     @GetMapping("/search")
-    public List<Movie> getMovieByTitle(@RequestParam String title) {
-        return service.getMovieByTitle(title);
+    public List<MovieResponseDto> getMovieByTitle(@RequestParam String q) {
+        return service.getMovieByTitle(q);
     }
 
     @GetMapping("/{id}")
-    public Movie getMovieById(@PathVariable UUID id) {
+    public MovieResponseDto getMovieById(@PathVariable UUID id) {
         return service.getMovieById(id);
     }
 
     @PostMapping()
-    public Movie createMovie(@RequestBody Movie movie) {
+    public MovieResponseDto createMovie(@RequestBody MovieRequestDto movie) {
         return service.createMovie(movie);
     }
 
     @PutMapping("/{id}")
-    public Movie updateMovie(@PathVariable UUID id, @RequestBody Movie movie) {
+    public MovieResponseDto updateMovie(@PathVariable UUID id, @RequestBody MovieRequestDto movie) {
         return service.updateMovie(id,movie);
     }
 
