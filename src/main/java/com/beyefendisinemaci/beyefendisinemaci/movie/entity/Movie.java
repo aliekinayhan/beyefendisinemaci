@@ -1,4 +1,4 @@
-package com.beyefendisinemaci.beyefendisinemaci.movie;
+package com.beyefendisinemaci.beyefendisinemaci.movie.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
