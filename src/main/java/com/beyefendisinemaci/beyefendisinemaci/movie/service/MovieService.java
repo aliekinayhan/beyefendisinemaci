@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor // Constructor Injection
 public class MovieService {
 
     private final MovieRepository repository;
@@ -30,6 +30,7 @@ public class MovieService {
         return repository.save(movie);
     }
 
+    // Find existing movie via id, update fields from updated movie
     public Movie updateMovie(UUID id, Movie updatedMovie) {
         Movie existingMovie = repository.findById(id).orElseThrow();
         existingMovie.setTitle(updatedMovie.getTitle());
