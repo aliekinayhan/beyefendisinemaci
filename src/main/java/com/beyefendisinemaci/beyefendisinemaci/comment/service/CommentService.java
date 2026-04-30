@@ -31,6 +31,9 @@ public class CommentService {
         return repository.findByUserId(id, pageable).map(mapper::toResponseDto);
     }
 
+    /*
+    TODO: Set the user
+    */
     public CommentResponseDto addComment(UUID movieId, CommentRequestDto requestDto) {
         Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieForCommentNotFoundException(movieId));
         Comment comment = Comment.builder()
@@ -47,10 +50,8 @@ public class CommentService {
     }
 
     public void deleteCommentById(UUID commentId) {
-        if (!repository.existsById(commentId)){
-            throw new CommentNotFoundException(commentId);
-        }
-        repository.deleteById(commentId);
+        Comment comment = repository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
+        repository.delete(comment);
     }
 
 }

@@ -14,6 +14,7 @@ public class CommentResponseDto {
     private String content;
     private LocalDateTime createdAt;
     private UUID movieId;
+    // I took the user info via mapper
     private UUID userId;
     private String username;
     private String userProfilePhoto;

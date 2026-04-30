@@ -59,8 +59,8 @@ public class MovieService {
     }
 
     public void deleteMovieById(UUID id) {
-        repository.findById(id).orElseThrow(() -> new MovieNotFoundException(id));
-        repository.deleteById(id);
+        Movie movie = repository.findById(id).orElseThrow(() -> new MovieNotFoundException(id));
+        repository.delete(movie);
     }
 
     public List<MovieResponseDto> getRecentMovies() {
