@@ -1,7 +1,5 @@
-package com.beyefendisinemaci.beyefendisinemaci.comment.entity;
+package com.beyefendisinemaci.beyefendisinemaci.user.entity;
 
-import com.beyefendisinemaci.beyefendisinemaci.movie.entity.Movie;
-import com.beyefendisinemaci.beyefendisinemaci.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,25 +12,23 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "comments")
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Comment {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(columnDefinition = "TEXT")
-    private String content;
+
+    private String username;
+    private String email;
+    private String password;
+    private String role;
+    private String profilePhoto;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
-    @ManyToOne
-    @JoinColumn(name = "movie_id")
-    private Movie movie;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
 }
