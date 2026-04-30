@@ -3,6 +3,7 @@ package com.beyefendisinemaci.beyefendisinemaci.movie.service;
 import com.beyefendisinemaci.beyefendisinemaci.movie.dto.request.MovieRequestDto;
 import com.beyefendisinemaci.beyefendisinemaci.movie.dto.response.MovieResponseDto;
 import com.beyefendisinemaci.beyefendisinemaci.movie.entity.Movie;
+import com.beyefendisinemaci.beyefendisinemaci.movie.exception.DuplicateMovieException;
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.MovieNotFoundException;
 import com.beyefendisinemaci.beyefendisinemaci.movie.mapper.MovieMapper;
 import com.beyefendisinemaci.beyefendisinemaci.movie.repository.MovieRepository;
@@ -33,6 +34,10 @@ public class MovieService {
     }
 
     public MovieResponseDto createMovie(MovieRequestDto movie) {
+        if (repository.existsByTmdbId(movie.getTmdbId())) {
+            throw new DuplicateMovieException(movie.getTmdbId());
+        }
+
         return mapper.toResponseDto(repository.save(mapper.toEntity(movie)));
     }
 
