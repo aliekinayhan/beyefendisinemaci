@@ -8,6 +8,8 @@ import com.beyefendisinemaci.beyefendisinemaci.movie.exception.MovieNotFoundExce
 import com.beyefendisinemaci.beyefendisinemaci.movie.mapper.MovieMapper;
 import com.beyefendisinemaci.beyefendisinemaci.movie.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +23,9 @@ public class MovieService {
     private final MovieMapper mapper;
     private final MovieRepository repository;
 
-    public List<MovieResponseDto> getAllMovies() {
-        return repository.findAll().stream().map(mapper::toResponseDto).collect(Collectors.toList());
+    public Page<MovieResponseDto> getAllMovies(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(mapper::toResponseDto);
     }
 
     public List<MovieResponseDto> getMovieByTitle(String title) {

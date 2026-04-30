@@ -5,6 +5,8 @@ import com.beyefendisinemaci.beyefendisinemaci.movie.dto.response.MovieResponseD
 import com.beyefendisinemaci.beyefendisinemaci.movie.service.MovieService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +22,8 @@ public class MovieController {
     private final MovieService service;
 
     @GetMapping()
-    public ResponseEntity<List<MovieResponseDto>> getAllMovies() {
-        return ResponseEntity.ok(service.getAllMovies());
+    public ResponseEntity<Page<MovieResponseDto>> getAllMovies(Pageable pageable) {
+        return ResponseEntity.ok(service.getAllMovies(pageable));
     }
 
     @GetMapping("/search")
