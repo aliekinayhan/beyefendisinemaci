@@ -4,6 +4,7 @@ import com.beyefendisinemaci.beyefendisinemaci.comment.exception.CommentNotFound
 import com.beyefendisinemaci.beyefendisinemaci.comment.exception.MovieForCommentNotFoundException;
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.DuplicateMovieException;
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.MovieNotFoundException;
+import com.beyefendisinemaci.beyefendisinemaci.movie.exception.TmdbIdMismatchException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,5 +79,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    @ExceptionHandler(TmdbIdMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTmdbMismatch(TmdbIdMismatchException exception, HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
 
 }

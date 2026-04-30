@@ -1,6 +1,7 @@
 package com.beyefendisinemaci.beyefendisinemaci.movie.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class MovieRequestDto {
     private String videoUrl;
     private String genre;
     private Integer releaseYear;
+    @NotNull
     private Integer tmdbId;
     @NotBlank
     private String review;
