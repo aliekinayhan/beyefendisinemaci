@@ -29,7 +29,10 @@ public class MovieService {
     }
 
     public List<MovieResponseDto> getMovieByTitle(String title) {
-        return repository.findByTitleContainingIgnoreCase(title).stream().map(mapper::toResponseDto).collect(Collectors.toList());
+        return repository.findByTitleContainingIgnoreCase(title)
+                .stream()
+                .map(mapper::toResponseDto)
+                .collect(Collectors.toList());
     }
 
     public MovieResponseDto getMovieById(UUID id) {
@@ -61,5 +64,11 @@ public class MovieService {
         repository.deleteById(id);
     }
 
+    public List<MovieResponseDto> getRecentMovies () {
+        return repository.findTop6ByOrderByCreatedAtDesc()
+                .stream()
+                .map(mapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
 
 }

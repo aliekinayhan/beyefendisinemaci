@@ -18,4 +18,7 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
     List<Movie> findByTitleContainingIgnoreCase(String title);
 
     boolean existsByTmdbId(Integer tmdbId);
+
+    List<Movie> findTop6ByOrderByCreatedAtDesc();
+
 }

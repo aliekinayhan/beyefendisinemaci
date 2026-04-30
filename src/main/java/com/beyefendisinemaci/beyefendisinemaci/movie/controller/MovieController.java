@@ -51,4 +51,9 @@ public class MovieController {
         service.deleteMovieById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/recent")
+    public ResponseEntity<List<MovieResponseDto>> recentMovies () {
+        return ResponseEntity.ok(service.getRecentMovies());
+    }
 }
