@@ -22,13 +22,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
     private String username;
     private String email;
     private String password;
     private String role;
     private String profilePhoto;
-
+    private String coverPhoto;
     @CreationTimestamp
     private LocalDateTime createdAt;
 }
