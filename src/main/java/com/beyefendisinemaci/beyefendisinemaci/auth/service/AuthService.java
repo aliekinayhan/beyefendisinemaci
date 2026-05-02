@@ -74,6 +74,10 @@ public class AuthService {
                 .build();
     }
 
+    public void logout(String refreshToken){
+        RefreshToken token = refreshTokenRepository.findByToken(refreshToken).orElseThrow(InvalidRefreshTokenException::new);
+        refreshTokenRepository.delete(token);
+    }
     // at login and register method these codes were repeating
     private AuthResponse generateAuthResponse(User user) {
         String accessToken = jwtUtil.generateToken(user);
