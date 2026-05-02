@@ -27,16 +27,23 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+    // to check user from db
     private final UserRepository userRepository;
+    // to check refresh token from db
     private final RefreshTokenRepository refreshTokenRepository;
+    // to hash password
     private final PasswordEncoder passwordEncoder;
+    // to create and control jwt
     private final JwtUtil jwtUtil;
+    // this is the mechanism of spring security to validate login
     private final AuthenticationManager authenticationManager;
+
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername()))
             throw new UsernameAlreadyExistsException(request.getUsername());
-        if (userRepository.existsByEmail(request.getEmail())) throw new EmailAlreadyExistsException(request.getEmail());
+        if (userRepository.existsByEmail(request.getEmail()))
+            throw new EmailAlreadyExistsException(request.getEmail());
         User user = User.builder()
                 .username(request.getUsername())
                 .firstName(request.getFirstName())
@@ -44,20 +51,30 @@ public class AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
-                .enabled(true).build();
+                .enabled(true)
+                .build();
         userRepository.save(user);
         return generateAuthResponse(user);
     }
 
     public AuthResponse login(LoginRequest request) {
+        // authenticationManager does not return User object
         authenticationManager.authenticate(
+                // a simple wrapper that carries username and password to the AuthenticationManager
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()
                 ));
+        // We need user object to produce token
         User user = userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found: " + request.getUsername()));
+        // delete existing refresh token to prevent reuse; note: this logs out other devices
         refreshTokenRepository.deleteByUser(user);
         return generateAuthResponse(user);
+    }
+
+    public void logout(String refreshToken) {
+        RefreshToken token = refreshTokenRepository.findByToken(refreshToken).orElseThrow(InvalidRefreshTokenException::new);
+        refreshTokenRepository.delete(token);
     }
 
     public AuthResponse refreshToken(RefreshTokenRequest request) {
@@ -75,13 +92,10 @@ public class AuthService {
                 .build();
     }
 
-    public void logout(String refreshToken){
-        RefreshToken token = refreshTokenRepository.findByToken(refreshToken).orElseThrow(InvalidRefreshTokenException::new);
-        refreshTokenRepository.delete(token);
-    }
-    // at login and register method these codes were repeating
+    // at login and register method, these codes were repeating
     private AuthResponse generateAuthResponse(User user) {
         String accessToken = jwtUtil.generateToken(user);
+        // we need a value that is unique and unpredictable
         String refreshTokenValue = UUID.randomUUID().toString();
         RefreshToken refreshToken = RefreshToken.builder()
                 .token(refreshTokenValue)

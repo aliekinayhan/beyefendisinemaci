@@ -13,17 +13,20 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
+    // Base64 String
     @Value("${jwt.secret}")
     private String secretKey;
 
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
+    // JWT library requires SecretKey type to sign and verify tokens
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    // builds and signs a JWT
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
@@ -42,8 +45,12 @@ public class JwtUtil {
                 .getSubject();
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    }
 
+    private boolean isTokenExpired(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
@@ -53,8 +60,6 @@ public class JwtUtil {
                 .before(new Date());
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
-    }
+
+
 }
