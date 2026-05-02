@@ -1,5 +1,7 @@
 package com.beyefendisinemaci.beyefendisinemaci.config;
 
+import com.beyefendisinemaci.beyefendisinemaci.auth.exception.EmailAlreadyExistsException;
+import com.beyefendisinemaci.beyefendisinemaci.auth.exception.UsernameAlreadyExistsException;
 import com.beyefendisinemaci.beyefendisinemaci.comment.exception.CommentNotFoundException;
 import com.beyefendisinemaci.beyefendisinemaci.comment.exception.MovieForCommentNotFoundException;
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.DuplicateMovieException;
@@ -89,5 +91,29 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException exception, HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .status(HttpStatus.CONFLICT.value())
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleUsernameAlreadyExists(UsernameAlreadyExistsException exception, HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .status(HttpStatus.CONFLICT.value())
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+
 
 }

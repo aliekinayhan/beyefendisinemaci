@@ -1,5 +1,7 @@
 package com.beyefendisinemaci.beyefendisinemaci.auth.service;
 
+import com.beyefendisinemaci.beyefendisinemaci.auth.dto.request.RegisterRequest;
+import com.beyefendisinemaci.beyefendisinemaci.auth.dto.response.AuthResponse;
 import com.beyefendisinemaci.beyefendisinemaci.auth.repository.RefreshTokenRepository;
 import com.beyefendisinemaci.beyefendisinemaci.config.JwtUtil;
 import com.beyefendisinemaci.beyefendisinemaci.user.repository.UserRepository;
@@ -16,4 +18,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+
+    public AuthResponse register(RegisterRequest request) {
+    return null;
+    }
 }
