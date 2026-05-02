@@ -32,7 +32,7 @@ public class User implements UserDetails {
     private String lastName;
     private String email;
     private String password;
-    private String role;
+    private Role role;
     private String profilePhoto;
     private String coverPhoto;
     @CreationTimestamp
@@ -41,7 +41,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

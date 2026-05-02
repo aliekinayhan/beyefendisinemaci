@@ -1,6 +1,8 @@
 package com.beyefendisinemaci.beyefendisinemaci.config;
 
 import com.beyefendisinemaci.beyefendisinemaci.auth.exception.EmailAlreadyExistsException;
+import com.beyefendisinemaci.beyefendisinemaci.auth.exception.InvalidRefreshTokenException;
+import com.beyefendisinemaci.beyefendisinemaci.auth.exception.RefreshTokenExpiredException;
 import com.beyefendisinemaci.beyefendisinemaci.auth.exception.UsernameAlreadyExistsException;
 import com.beyefendisinemaci.beyefendisinemaci.comment.exception.CommentNotFoundException;
 import com.beyefendisinemaci.beyefendisinemaci.comment.exception.MovieForCommentNotFoundException;
@@ -112,6 +114,28 @@ public class GlobalExceptionHandler {
                 .path(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidRefreshToken(InvalidRefreshTokenException exception, HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+    @ExceptionHandler(RefreshTokenExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleRefreshTokenExpired(RefreshTokenExpiredException exception, HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
 
