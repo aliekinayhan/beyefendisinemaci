@@ -56,6 +56,7 @@ public class AuthService {
                         request.getPassword()
                 ));
         User user = userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found: " + request.getUsername()));
+        refreshTokenRepository.deleteByUser(user);
         return generateAuthResponse(user);
     }
 
