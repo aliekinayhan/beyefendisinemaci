@@ -25,6 +25,7 @@ public class UserService {
         return mapper.toResponseDto(user);
     }
 
+    //TODO: Check if username already exists
     public UserResponseDto updateProfile(UserUpdateRequest request, UUID userId) {
         User existingUser = repository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         existingUser.setUsername(request.getUsername());

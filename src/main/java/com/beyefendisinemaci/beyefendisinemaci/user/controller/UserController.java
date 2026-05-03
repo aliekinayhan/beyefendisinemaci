@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @PutMapping("/users/me/password")
-    public ResponseEntity<Void> updateProfile(@Valid @RequestBody ChangePasswordRequest request, @AuthenticationPrincipal User currentUser) {
+    public ResponseEntity<Void> updatePassword(@Valid @RequestBody ChangePasswordRequest request, @AuthenticationPrincipal User currentUser) {
         service.changePassword(currentUser.getId(), request.getOldPassword(), request.getNewPassword());
         return ResponseEntity.noContent().build();
     }
