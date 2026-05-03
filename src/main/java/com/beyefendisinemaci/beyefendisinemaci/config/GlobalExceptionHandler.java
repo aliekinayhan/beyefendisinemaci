@@ -11,6 +11,7 @@ import com.beyefendisinemaci.beyefendisinemaci.movie.exception.MovieNotFoundExce
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.TmdbIdMismatchException;
 import com.beyefendisinemaci.beyefendisinemaci.user.exception.PasswordIsIncorrectException;
 import com.beyefendisinemaci.beyefendisinemaci.user.exception.UserNotFoundException;
+import com.beyefendisinemaci.beyefendisinemaci.watchlist.exception.AlreadyExistsOnListException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -162,6 +163,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    @ExceptionHandler(AlreadyExistsOnListException.class)
+    public ResponseEntity<ErrorResponse> handleAlreadyExistsOnList(AlreadyExistsOnListException exception, HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .status(HttpStatus.CONFLICT.value())
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
 
 
 }
