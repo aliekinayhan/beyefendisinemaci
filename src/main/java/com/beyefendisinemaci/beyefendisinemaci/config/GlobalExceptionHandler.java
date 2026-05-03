@@ -9,6 +9,8 @@ import com.beyefendisinemaci.beyefendisinemaci.comment.exception.MovieForComment
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.DuplicateMovieException;
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.MovieNotFoundException;
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.TmdbIdMismatchException;
+import com.beyefendisinemaci.beyefendisinemaci.user.exception.PasswordIsIncorrectException;
+import com.beyefendisinemaci.beyefendisinemaci.user.exception.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -136,6 +138,28 @@ public class GlobalExceptionHandler {
                 .path(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException exception, HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(PasswordIsIncorrectException.class)
+    public ResponseEntity<ErrorResponse> handlePasswordIsIncorrect(PasswordIsIncorrectException exception, HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
 

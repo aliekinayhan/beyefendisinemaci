@@ -12,12 +12,7 @@ import lombok.Builder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserUpdateRequest {
+public class DeleteAccountRequest {
     @NotBlank
-    private String username;
-    private String firstName;
-    private String lastName;
-    private String profilePhoto;
-    private String coverPhoto;
-
+    private String password;
 }
