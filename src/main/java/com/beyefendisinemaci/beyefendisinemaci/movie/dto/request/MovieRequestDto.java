@@ -18,6 +18,7 @@ public class MovieRequestDto {
     @NotBlank
     private String title;
     private String posterUrl;
+    private String shortVideoUrl;
     private String videoUrl;
     private String genre;
     private Integer releaseYear;
