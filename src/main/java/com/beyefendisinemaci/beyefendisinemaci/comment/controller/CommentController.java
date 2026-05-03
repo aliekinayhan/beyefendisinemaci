@@ -3,12 +3,14 @@ package com.beyefendisinemaci.beyefendisinemaci.comment.controller;
 import com.beyefendisinemaci.beyefendisinemaci.comment.dto.request.CommentRequestDto;
 import com.beyefendisinemaci.beyefendisinemaci.comment.dto.response.CommentResponseDto;
 import com.beyefendisinemaci.beyefendisinemaci.comment.service.CommentService;
+import com.beyefendisinemaci.beyefendisinemaci.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -30,8 +32,8 @@ public class CommentController {
     }
 
     @PostMapping("/movies/{movieId}/comments")
-    public ResponseEntity<CommentResponseDto> addComment(@PathVariable UUID movieId, @Valid @RequestBody CommentRequestDto request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.addComment(movieId, request));
+    public ResponseEntity<CommentResponseDto> addComment(@PathVariable UUID movieId, @Valid @RequestBody CommentRequestDto request, @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.addComment(movieId, request, currentUser));
     }
 
     @PutMapping("/comments/{id}")

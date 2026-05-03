@@ -112,5 +112,3 @@ public class AuthService {
 
 }
 
-
-//TODO: Admin should be able to make others admin I'll add endpoint for it

@@ -9,6 +9,7 @@ import com.beyefendisinemaci.beyefendisinemaci.comment.mapper.CommentMapper;
 import com.beyefendisinemaci.beyefendisinemaci.comment.repository.CommentRepository;
 import com.beyefendisinemaci.beyefendisinemaci.movie.entity.Movie;
 import com.beyefendisinemaci.beyefendisinemaci.movie.repository.MovieRepository;
+import com.beyefendisinemaci.beyefendisinemaci.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -31,20 +32,18 @@ public class CommentService {
         return repository.findByUserId(id, pageable).map(mapper::toResponseDto);
     }
 
-    /*
-    TODO: Set the user
-    */
-    public CommentResponseDto addComment(UUID movieId, CommentRequestDto requestDto) {
+    public CommentResponseDto addComment(UUID movieId, CommentRequestDto requestDto, User user) {
         Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieForCommentNotFoundException(movieId));
         Comment comment = Comment.builder()
                 .content(requestDto.getContent())
                 .movie(movie)
+                .user(user)
                 .build();
         return mapper.toResponseDto(repository.save(comment));
     }
 
     public CommentResponseDto updateComment(UUID commentId, CommentRequestDto requestDto) {
-        Comment existingComment = repository.findById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
+        Comment existingComment = repository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
         existingComment.setContent(requestDto.getContent());
         return mapper.toResponseDto(repository.save(existingComment));
     }
