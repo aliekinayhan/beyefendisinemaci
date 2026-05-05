@@ -23,3 +23,9 @@ jwt:
 
 tmdb:
   api-key: ${TMDB_API_KEY}
+
+aws:
+  access-key: ${AWS_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY}
+  bucket-name: ${AWS_BUCKET_NAME}
+  region: ${AWS_REGION}
