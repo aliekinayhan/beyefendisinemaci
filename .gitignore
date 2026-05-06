@@ -87,7 +87,8 @@ replay_pid*
 # Docker
 # ===========================
 docker-compose.override.yml
-
+.env
+docker-compose.env
 # ===========================
 # Misc
 # ===========================
