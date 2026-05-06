@@ -9,6 +9,10 @@ import com.beyefendisinemaci.beyefendisinemaci.comment.exception.MovieForComment
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.DuplicateMovieException;
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.MovieNotFoundException;
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.TmdbIdMismatchException;
+import com.beyefendisinemaci.beyefendisinemaci.s3.exception.EmptyFileException;
+import com.beyefendisinemaci.beyefendisinemaci.s3.exception.FileSizeExceededException;
+import com.beyefendisinemaci.beyefendisinemaci.s3.exception.InvalidFileExtensionException;
+import com.beyefendisinemaci.beyefendisinemaci.s3.exception.InvalidFileTypeException;
 import com.beyefendisinemaci.beyefendisinemaci.user.exception.PasswordIsIncorrectException;
 import com.beyefendisinemaci.beyefendisinemaci.user.exception.UserNotFoundException;
 import com.beyefendisinemaci.beyefendisinemaci.watchlist.exception.AlreadyExistsOnListException;
@@ -172,6 +176,50 @@ public class GlobalExceptionHandler {
                 .path(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(EmptyFileException.class)
+    public ResponseEntity<ErrorResponse> handleEmptyFile(EmptyFileException exception, HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(InvalidFileTypeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFileType(InvalidFileTypeException exception, HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(FileSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleFileSizeExceeded(FileSizeExceededException exception, HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(InvalidFileExtensionException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFileExtension(InvalidFileExtensionException exception, HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.builder()
+                .timeStamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
 

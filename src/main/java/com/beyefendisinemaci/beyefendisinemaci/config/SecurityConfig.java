@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/movies/recent").permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/tmdb/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/s3/upload/video-long", "/api/s3/upload/video-short").hasAuthority("ADMIN")
                         .requestMatchers("/api/s3/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/movies/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/movies/**").hasAuthority("ADMIN")

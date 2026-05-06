@@ -20,13 +20,26 @@ public class S3Controller {
 
     private final S3Service service;
 
-    @PostMapping("")
-    public ResponseEntity<String> uploadFile (
-            @RequestParam String fileName,
-            @RequestParam MultipartFile file,
-            @RequestParam String contentType) throws IOException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.uploadFile(fileName,file.getBytes(),contentType));
+    @PostMapping("/profile-photo")
+    public ResponseEntity<String> uploadProfilePhoto(@RequestParam MultipartFile file) throws IOException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.uploadFile(file, "profile-photos"));
     }
+
+    @PostMapping("/cover-photo")
+    public ResponseEntity<String> uploadCoverPhoto(@RequestParam MultipartFile file) throws IOException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.uploadFile(file, "cover-photos"));
+    }
+
+    @PostMapping("/video-long")
+    public ResponseEntity<String> uploadLongVideo(@RequestParam MultipartFile file) throws IOException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.uploadFile(file, "videos/long"));
+    }
+
+    @PostMapping("/video-short")
+    public ResponseEntity<String> uploadShortVideo(@RequestParam MultipartFile file) throws IOException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.uploadFile(file, "videos/short"));
+    }
+
 
 
 }

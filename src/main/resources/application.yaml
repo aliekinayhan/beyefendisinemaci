@@ -29,3 +29,4 @@ aws:
   secret-key: ${AWS_SECRET_KEY}
   bucket-name: ${AWS_BUCKET_NAME}
   region: ${AWS_REGION}
+  cloudfront-url: ${CLOUDFRONT_URL}
