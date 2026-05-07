@@ -18,4 +18,6 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
 
     @Transactional
     void deleteByUserId(UUID userID);
+
+    void deleteByMovieId(UUID movieId);
 }

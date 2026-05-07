@@ -16,6 +16,7 @@ public class MovieResponseDto {
 
     private UUID id;
     private String title;
+    private Integer tmdbId;
     private String posterUrl;
     private String shortVideoUrl;
     private String videoUrl;
