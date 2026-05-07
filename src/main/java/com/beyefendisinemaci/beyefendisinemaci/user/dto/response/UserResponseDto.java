@@ -16,6 +16,8 @@ import java.util.UUID;
 public class UserResponseDto {
     private UUID id;
     private String username;
+    private String firstName;
+    private String lastName;
     private String profilePhoto;
     private String coverPhoto;
 }
