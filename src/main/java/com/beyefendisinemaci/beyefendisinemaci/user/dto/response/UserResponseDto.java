@@ -1,5 +1,6 @@
 package com.beyefendisinemaci.beyefendisinemaci.user.dto.response;
 
+import com.beyefendisinemaci.beyefendisinemaci.user.entity.Role;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,5 @@ public class UserResponseDto {
     private String lastName;
     private String profilePhoto;
     private String coverPhoto;
+    private Role role;
 }

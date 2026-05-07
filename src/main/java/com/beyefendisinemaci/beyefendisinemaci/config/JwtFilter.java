@@ -51,6 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             // empty SecurityContextHolder will cause Spring Security to return 401
             // don't expose error details to attacker
+            SecurityContextHolder.clearContext();
             return;
         }
         filterChain.doFilter(request, response);

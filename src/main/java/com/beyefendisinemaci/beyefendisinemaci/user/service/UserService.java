@@ -1,6 +1,7 @@
 package com.beyefendisinemaci.beyefendisinemaci.user.service;
 
 import com.beyefendisinemaci.beyefendisinemaci.auth.exception.UsernameAlreadyExistsException;
+import com.beyefendisinemaci.beyefendisinemaci.auth.repository.RefreshTokenRepository;
 import com.beyefendisinemaci.beyefendisinemaci.user.dto.request.UserUpdateRequest;
 import com.beyefendisinemaci.beyefendisinemaci.user.dto.response.UserResponseDto;
 import com.beyefendisinemaci.beyefendisinemaci.user.dto.response.UserSearchResponseDto;
@@ -24,6 +25,7 @@ public class UserService {
     private final UserRepository repository;
     private final UserMapper mapper;
     private final PasswordEncoder encoder;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public UserResponseDto getProfile(UUID userId) {
         User user = repository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
@@ -55,7 +57,9 @@ public class UserService {
     public void deleteAccount(UUID userId, String password) {
         User user = repository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         if (encoder.matches(password, user.getPassword())) {
+            refreshTokenRepository.deleteByUserId(userId);
             repository.delete(user);
+
         } else {
             throw new PasswordIsIncorrectException();
         }
@@ -65,6 +69,7 @@ public class UserService {
     // For admin
     public void deleteAccountByAdmin(UUID userId) {
         User user = repository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        refreshTokenRepository.deleteByUserId(userId);
         repository.delete(user);
     }
 
