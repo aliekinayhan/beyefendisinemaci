@@ -1,7 +1,10 @@
 package com.beyefendisinemaci.beyefendisinemaci.user.service;
 
+import com.beyefendisinemaci.beyefendisinemaci.auth.exception.UsernameAlreadyExistsException;
 import com.beyefendisinemaci.beyefendisinemaci.user.dto.request.UserUpdateRequest;
 import com.beyefendisinemaci.beyefendisinemaci.user.dto.response.UserResponseDto;
+import com.beyefendisinemaci.beyefendisinemaci.user.dto.response.UserSearchResponseDto;
+import com.beyefendisinemaci.beyefendisinemaci.user.entity.Role;
 import com.beyefendisinemaci.beyefendisinemaci.user.entity.User;
 import com.beyefendisinemaci.beyefendisinemaci.user.exception.PasswordIsIncorrectException;
 import com.beyefendisinemaci.beyefendisinemaci.user.exception.UserNotFoundException;
@@ -10,7 +13,9 @@ import com.beyefendisinemaci.beyefendisinemaci.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -25,9 +30,10 @@ public class UserService {
         return mapper.toResponseDto(user);
     }
 
-    //TODO: Check if username already exists
     public UserResponseDto updateProfile(UserUpdateRequest request, UUID userId) {
         User existingUser = repository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        if (repository.existsByUsernameAndIdNot(request.getUsername(), userId))
+            throw new UsernameAlreadyExistsException(request.getUsername());
         existingUser.setUsername(request.getUsername());
         existingUser.setFirstName(request.getFirstName());
         existingUser.setLastName(request.getLastName());
@@ -49,13 +55,11 @@ public class UserService {
     public void deleteAccount(UUID userId, String password) {
         User user = repository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         if (encoder.matches(password, user.getPassword())) {
-            repository.deleteById(userId);
+            repository.delete(user);
         } else {
             throw new PasswordIsIncorrectException();
         }
     }
-
-
 
 
     // For admin
@@ -70,4 +74,15 @@ public class UserService {
         repository.save(user);
     }
 
+    public void changeRole(UUID userId, Role role) {
+        User user = repository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        user.setRole(role);
+        repository.save(user);
+    }
+
+    public List<UserSearchResponseDto> searchUser(String username) {
+        return repository.findByUsernameContainingIgnoreCase(username).stream()
+                .map(mapper::toSearchResponseDto)
+                .toList();
+    }
 }

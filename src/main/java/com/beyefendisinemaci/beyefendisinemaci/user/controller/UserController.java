@@ -1,17 +1,21 @@
 package com.beyefendisinemaci.beyefendisinemaci.user.controller;
 
 import com.beyefendisinemaci.beyefendisinemaci.user.dto.request.ChangePasswordRequest;
+import com.beyefendisinemaci.beyefendisinemaci.user.dto.request.ChangeRoleRequest;
 import com.beyefendisinemaci.beyefendisinemaci.user.dto.request.DeleteAccountRequest;
 import com.beyefendisinemaci.beyefendisinemaci.user.dto.request.UserUpdateRequest;
 import com.beyefendisinemaci.beyefendisinemaci.user.dto.response.UserResponseDto;
+import com.beyefendisinemaci.beyefendisinemaci.user.dto.response.UserSearchResponseDto;
 import com.beyefendisinemaci.beyefendisinemaci.user.entity.User;
 import com.beyefendisinemaci.beyefendisinemaci.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -50,6 +54,12 @@ public class UserController {
 
 
     // For Admin
+
+    @GetMapping("/admin/users/search")
+    public ResponseEntity<List<UserSearchResponseDto>> getUsers (@RequestParam("q") String username) {
+        return ResponseEntity.ok(service.searchUser(username));
+    }
+
     @DeleteMapping("/admin/users/{id}")
     public ResponseEntity<Void> deleteProfileAdmin(@PathVariable UUID id) {
         service.deleteAccountByAdmin(id);
@@ -62,5 +72,12 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/admin/users/{id}/role")
+    public ResponseEntity<Void> changeRole(@PathVariable UUID id, @Valid @RequestBody ChangeRoleRequest request) {
+        service.changeRole(id, request.getRole());
+        return ResponseEntity.noContent().build();
+    }
 
 }
+
+
