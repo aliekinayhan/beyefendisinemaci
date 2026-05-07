@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -26,6 +27,7 @@ public class WatchlistService {
     private final MovieRepository movieRepository;
     private final WatchlistMapper mapper;
 
+    @Transactional
     public Slice<WatchlistResponseDto> getWatchList(UUID userId, Pageable pageable) {
         return repository.findByUserId(userId, pageable).map(mapper::toResponseDto);
     }
@@ -44,6 +46,7 @@ public class WatchlistService {
 
     }
 
+    @Transactional
     public void removeFromWatchList(UUID userId, UUID movieId) {
         repository.deleteByUserIdAndMovieId(userId, movieId);
     }
