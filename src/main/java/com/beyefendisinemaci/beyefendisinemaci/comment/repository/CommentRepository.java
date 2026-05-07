@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -14,4 +15,7 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
     Slice<Comment> findByMovieId(UUID movieId, Pageable pageable);
 
     Slice<Comment> findByUserId(UUID userId,Pageable pageable);
+
+    @Transactional
+    void deleteByUserId(UUID userID);
 }
