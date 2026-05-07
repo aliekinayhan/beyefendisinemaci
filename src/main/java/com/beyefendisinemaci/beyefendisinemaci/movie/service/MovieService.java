@@ -52,6 +52,7 @@ public class MovieService {
         existingMovie.setGenre(updatedMovie.getGenre());
         existingMovie.setPosterUrl(updatedMovie.getPosterUrl());
         existingMovie.setReview(updatedMovie.getReview());
+        existingMovie.setShortVideoUrl(updatedMovie.getShortVideoUrl());
         existingMovie.setVideoUrl(updatedMovie.getVideoUrl());
         existingMovie.setReleaseYear(updatedMovie.getReleaseYear());
         existingMovie.setTmdbId(updatedMovie.getTmdbId());
