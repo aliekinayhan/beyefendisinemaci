@@ -58,14 +58,15 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Public
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/movies/*/comments").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/movies/recent").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/movies/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/movies/*/comments").permitAll()
+                        // Admin
+                        .requestMatchers("/api/s3/upload/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/tmdb/**").hasAuthority("ADMIN")
-                        .requestMatchers("/api/s3/upload/video-long", "/api/s3/upload/video-short").hasAuthority("ADMIN")
-                        .requestMatchers("/api/s3/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/movies/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/movies/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/movies/**").hasAuthority("ADMIN")
