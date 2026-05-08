@@ -63,6 +63,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/movies/recent").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/movies/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/movies/*/comments").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/movies/*/comments").authenticated()
                         // Admin
                         .requestMatchers("/api/s3/upload/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
