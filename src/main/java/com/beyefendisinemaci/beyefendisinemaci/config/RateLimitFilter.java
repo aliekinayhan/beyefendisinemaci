@@ -1,5 +1,7 @@
 package com.beyefendisinemaci.beyefendisinemaci.config;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
@@ -9,19 +11,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class RateLimitFilter extends OncePerRequestFilter {
 
-    // Map to store a rate limit bucket per IP address.
-    // Thread-safe map to safely handle concurrent requests and avoid race conditions
-    private final Map<String, Bucket> ipBuckets = new ConcurrentHashMap<>();
+    private final Cache<String, Bucket> ipBuckets = Caffeine.newBuilder()
+            .expireAfterAccess(1, TimeUnit.HOURS)
+            .maximumSize(10000)
+            .build();
 
     private Bucket createIpBucket() {
         Bandwidth limit = Bandwidth.classic(10, Refill.greedy(10, Duration.ofHours(1)));
@@ -29,7 +30,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
     }
 
     private Bucket getIpBucket(String ip) {
-        return ipBuckets.computeIfAbsent(ip, k -> createIpBucket());
+        return ipBuckets.get(ip, k -> createIpBucket());
     }
 
     @Override
