@@ -1,4 +1,4 @@
-package com.beyefendisinemaci.beyefendisinemaci.config;
+package com.beyefendisinemaci.beyefendisinemaci.config.ratelimit;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
