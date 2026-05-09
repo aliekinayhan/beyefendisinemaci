@@ -16,7 +16,6 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
 
     Slice<Comment> findByUserId(UUID userId,Pageable pageable);
 
-    @Transactional
     void deleteByUserId(UUID userID);
 
     void deleteByMovieId(UUID movieId);

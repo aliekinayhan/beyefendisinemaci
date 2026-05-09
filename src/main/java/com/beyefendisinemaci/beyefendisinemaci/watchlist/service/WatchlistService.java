@@ -22,32 +22,44 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class WatchlistService {
-    private final WatchlistRepository repository;
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
-    private final WatchlistMapper mapper;
+    private final WatchlistRepository watchlistRepository;
+    private final WatchlistMapper watchlistMapper;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Slice<WatchlistResponseDto> getWatchList(UUID userId, Pageable pageable) {
-        return repository.findByUserId(userId, pageable).map(mapper::toResponseDto);
+        return watchlistRepository.findByUserId(userId, pageable).map(watchlistMapper::toResponseDto);
     }
 
+    @Transactional
     public void addToWatchList(UUID userId, UUID movieId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException(movieId));
-        if (repository.existsByUserIdAndMovieId(userId, movieId)) {
+        if (watchlistRepository.existsByUserIdAndMovieId(userId, movieId)) {
             throw new AlreadyExistsOnListException();
         }
         Watchlist item = Watchlist.builder()
                 .user(user)
                 .movie(movie)
                 .build();
-        repository.save(item);
+        watchlistRepository.save(item);
 
     }
 
     @Transactional
     public void removeFromWatchList(UUID userId, UUID movieId) {
-        repository.deleteByUserIdAndMovieId(userId, movieId);
+        watchlistRepository.deleteByUserIdAndMovieId(userId, movieId);
     }
+
+    @Transactional
+    public void deleteByUserId(UUID userId) {
+        watchlistRepository.deleteByUserId(userId);
+    }
+
+    @Transactional
+    public void deleteByMovieId(UUID movieId) {
+        watchlistRepository.deleteByMovieId(movieId);
+    }
+
 }

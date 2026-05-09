@@ -23,7 +23,7 @@ server:
 
 jwt:
   secret: ${JWT_SECRET}
-  expiration: 3600000
+  expiration: 900000
 
 tmdb:
   api-key: ${TMDB_API_KEY}
