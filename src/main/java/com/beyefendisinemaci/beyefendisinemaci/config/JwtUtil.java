@@ -1,5 +1,6 @@
 package com.beyefendisinemaci.beyefendisinemaci.config;
 
+import com.beyefendisinemaci.beyefendisinemaci.user.entity.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -27,9 +28,10 @@ public class JwtUtil {
     }
 
     // builds and signs a JWT
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .subject(user.getUsername())
+                .claim("userId", user.getId().toString())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSigningKey())
@@ -43,6 +45,15 @@ public class JwtUtil {
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
+    }
+
+    public String extractUserId(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("userId", String.class);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -59,7 +70,5 @@ public class JwtUtil {
                 .getExpiration()
                 .before(new Date());
     }
-
-
 
 }
