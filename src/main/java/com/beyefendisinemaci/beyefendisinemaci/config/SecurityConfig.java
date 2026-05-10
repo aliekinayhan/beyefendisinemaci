@@ -1,6 +1,7 @@
 package com.beyefendisinemaci.beyefendisinemaci.config;
 
 import com.beyefendisinemaci.beyefendisinemaci.config.ratelimit.AuthenticatedRateLimit;
+import com.beyefendisinemaci.beyefendisinemaci.config.ratelimit.S3RateLimitFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final AuthenticatedRateLimit authenticatedRateLimit;
+    private final S3RateLimitFilter s3RateLimitFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -68,15 +70,18 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.POST, "/api/movies/*/comments").authenticated()
                         // Admin
-                        .requestMatchers("/api/s3/upload/**").hasAuthority("ADMIN")
-                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/s3/upload/profile-photo").authenticated()
+                        .requestMatchers("/api/s3/upload/cover-photo").authenticated()
+                        .requestMatchers("/api/s3/upload/video-long").hasAuthority("ADMIN")
+                        .requestMatchers("/api/s3/upload/video-short").hasAuthority("ADMIN").requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/tmdb/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/movies/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/movies/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/movies/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(authenticatedRateLimit,JwtFilter.class);
+                .addFilterAfter(s3RateLimitFilter, JwtFilter.class)
+                .addFilterAfter(authenticatedRateLimit, JwtFilter.class);
 
         return http.build();
     }
