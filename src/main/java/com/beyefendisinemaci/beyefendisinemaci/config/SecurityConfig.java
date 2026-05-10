@@ -1,5 +1,6 @@
 package com.beyefendisinemaci.beyefendisinemaci.config;
 
+import com.beyefendisinemaci.beyefendisinemaci.config.ratelimit.AuthenticatedRateLimit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final AuthenticatedRateLimit authenticatedRateLimit;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -73,7 +75,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/movies/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/movies/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(authenticatedRateLimit,JwtFilter.class);
+
         return http.build();
     }
 }
