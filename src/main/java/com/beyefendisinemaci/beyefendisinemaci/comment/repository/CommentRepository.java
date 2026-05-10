@@ -12,9 +12,9 @@ import java.util.UUID;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, UUID> {
 
-    Slice<Comment> findByMovieId(UUID movieId, Pageable pageable);
+    Slice<Comment> findByMovieIdOrderByCreatedAtDesc(UUID movieId, Pageable pageable);
 
-    Slice<Comment> findByUserId(UUID userId,Pageable pageable);
+    Slice<Comment> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
 
     void deleteByUserId(UUID userID);
 

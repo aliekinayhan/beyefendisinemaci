@@ -27,12 +27,12 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public Slice<CommentResponseDto> getCommentsByMovie(UUID id, Pageable pageable) {
-        return commentRepository.findByMovieId(id, pageable).map(mapper::toResponseDto);
+        return commentRepository.findByMovieIdOrderByCreatedAtDesc(id, pageable).map(mapper::toResponseDto);
     }
 
     @Transactional(readOnly = true)
     public Slice<CommentResponseDto> getCommentsByUser(UUID id, Pageable pageable) {
-        return commentRepository.findByUserId(id, pageable).map(mapper::toResponseDto);
+        return commentRepository.findByUserIdOrderByCreatedAtDesc(id, pageable).map(mapper::toResponseDto);
     }
 
     @Transactional
