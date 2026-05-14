@@ -21,3 +21,27 @@ https://beyefendisinemaci.com
 - Fully containerized with Docker and deployed on AWS
 
 ## Screenshots 
+### Home Page
+![Home Page](screenshots/Home%20Page.png)
+*Film cards with watchlist functionality*
+### Movie Details
+![Movie Details](screenshots/Movie%20Details.png)
+*Movie detail page with review, long and short video review*
+### Comments
+![Comments](screenshots/Movie%20Details%202.png)
+*Comment section*
+### User Profile - Comments
+![Profile Page](screenshots/Profile%20Page.png)
+*User profile showing comment history*
+### User Profile - Watchlist
+![Watchlist](screenshots/Profile%20Page%202%20.png)
+*User watchlist with movie posters*
+### Admin Panel - Edit & Delete Movies and Add Movie via TMDB
+![Admin Panel Films](screenshots/Admin%20Panel%201%20.png)
+*Admin can search and import movies directly from TMDB and Admin can edit or delete existing movies*
+### Admin Panel - User Management
+![Admin Panel Search](screenshots/Admin%20Panel%203%20.png)
+*Admin can search, ban, promote or delete users*
+### Add Movie Form
+![Add Movie](screenshots/Add%20Movie.png)
+*Admin fills in review, uploads poster and videos via S3*
