@@ -11,9 +11,14 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 
 import java.io.IOException;
+import java.lang.reflect.MalformedParameterizedTypeException;
+import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -27,6 +32,7 @@ public class S3Service {
     private String cloudFrontUrl;
 
     private final S3Client s3Client;
+    private final S3Presigner s3Presigner;
 
     public String uploadFile(MultipartFile file, String prefix) throws IOException {
         validateFile(file, prefix);
@@ -72,5 +78,35 @@ public class S3Service {
             throw new FileSizeExceededException("Video can not be larger 500MB");
 
     }
+
+    public Map<String, String> generatePresignedUrl(String prefix, String extension) {
+
+        validateExtension(extension, prefix);
+
+        String fileName = prefix + "/" + UUID.randomUUID() + "." + extension;
+        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(r -> r.putObjectRequest(p -> p
+                        .bucket(bucketName)
+                        .key(fileName)
+                        .build()
+                ).signatureDuration(Duration.ofMinutes(10))
+                .build());
+        return Map.of(
+                "uploadUrl", presignedRequest.url().toString(),
+                "cloudFrontUrl", cloudFrontUrl + "/" + fileName
+        );
+    }
+
+    private void validateExtension(String extension, String prefix) {
+        List<String> allowedImageExtensions = List.of("jpg", "jpeg", "png", "webp");
+        List<String> allowedVideoExtensions = List.of("mp4", "mov", "avi");
+
+        String ext = extension.toLowerCase().replaceAll("^\\.", "");
+
+        if (prefix.contains("photos") && !allowedImageExtensions.contains(ext))
+            throw new InvalidFileExtensionException();
+        if (prefix.contains("videos") && !allowedVideoExtensions.contains(ext))
+            throw new InvalidFileExtensionException();
+    }
+
 }
 

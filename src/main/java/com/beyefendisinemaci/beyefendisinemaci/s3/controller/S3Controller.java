@@ -5,13 +5,11 @@ import com.beyefendisinemaci.beyefendisinemaci.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/s3/upload")
@@ -40,6 +38,25 @@ public class S3Controller {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.uploadFile(file, "videos/short"));
     }
 
+    @GetMapping("/presigned-url/profile-photo")
+    public ResponseEntity<Map<String, String>> getProfilePhotoPresignedUrl(@RequestParam String extension) {
+        return ResponseEntity.ok(service.generatePresignedUrl("profile-photos", extension));
+    }
+
+    @GetMapping("/presigned-url/cover-photo")
+    public ResponseEntity<Map<String, String>> getCoverPhotoPresignedUrl(@RequestParam String extension) {
+        return ResponseEntity.ok(service.generatePresignedUrl("cover-photos", extension));
+    }
+
+    @GetMapping("/presigned-url/video-long")
+    public ResponseEntity<Map<String, String>> getLongVideoPresignedUrl(@RequestParam String extension) {
+        return ResponseEntity.ok(service.generatePresignedUrl("videos/long", extension));
+    }
+
+    @GetMapping("/presigned-url/video-short")
+    public ResponseEntity<Map<String, String>> getShortVideoPresignedUrl(@RequestParam String extension) {
+        return ResponseEntity.ok(service.generatePresignedUrl("videos/short", extension));
+    }
 
 
 }

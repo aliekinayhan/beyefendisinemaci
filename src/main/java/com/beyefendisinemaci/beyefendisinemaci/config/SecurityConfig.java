@@ -46,7 +46,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://beyefendisinemaci.com"));
+        configuration.setAllowedOrigins(List.of(
+                "https://beyefendisinemaci.com",
+                "https://api.beyefendisinemaci.com",
+                "http://localhost:3000",
+                "http://localhost:5173"
+        ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
@@ -62,6 +67,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/s3/upload/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/s3/upload/presigned-url/**").authenticated()
                         // Public
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/movies/recent").permitAll()
@@ -75,6 +83,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/s3/upload/video-long").hasAuthority("ADMIN")
                         .requestMatchers("/api/s3/upload/video-short").hasAuthority("ADMIN").requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/tmdb/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/s3/upload/presigned-url/video-long").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/s3/upload/presigned-url/video-short").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/movies/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/movies/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/movies/**").hasAuthority("ADMIN")
