@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import java.util.List;
 
@@ -16,7 +18,20 @@ public class TmdbService {
     @Value("${tmdb.api-key}")
     private String apiKey;
 
-    private final RestClient restClient = RestClient.create();
+    private final RestClient restClient;
+
+    public TmdbService() {
+
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .build();
+
+        HttpComponentsClientHttpRequestFactory factory =
+                new HttpComponentsClientHttpRequestFactory(httpClient);
+
+        this.restClient = RestClient.builder()
+                .requestFactory(factory)
+                .build();
+    }
 
     public List<TmdbMovieDto> searchMovies(String query) {
         TmdbSearchResponse response = restClient.get()
@@ -25,13 +40,13 @@ public class TmdbService {
                 .body(TmdbSearchResponse.class);
 
         return response.getResults().stream().map(movie -> TmdbMovieDto.builder()
-                .tmdbId(movie.getId())
-                .title(movie.getTitle())
-                .posterUrl("https://image.tmdb.org/t/p/w500" + movie.getPosterPath())
-                .releaseYear(movie.getReleaseDate() != null && !movie.getReleaseDate().isEmpty()
-                        ? movie.getReleaseDate().substring(0, 4)
-                        : null)
-                .build())
+                        .tmdbId(movie.getId())
+                        .title(movie.getTitle())
+                        .posterUrl("https://image.tmdb.org/t/p/w500" + movie.getPosterPath())
+                        .releaseYear(movie.getReleaseDate() != null && !movie.getReleaseDate().isEmpty()
+                                ? movie.getReleaseDate().substring(0, 4)
+                                : null)
+                        .build())
                 .toList();
     }
 
