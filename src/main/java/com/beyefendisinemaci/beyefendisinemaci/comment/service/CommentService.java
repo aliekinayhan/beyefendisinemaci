@@ -37,7 +37,7 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto addComment(UUID movieId, CommentRequestDto requestDto, User user) {
-        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException(movieId));
+        Movie movie = findByMovieId(movieId);
         Comment comment = Comment.builder()
                 .content(requestDto.getContent())
                 .movie(movie)
@@ -48,14 +48,14 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto updateComment(UUID commentId, CommentRequestDto requestDto) {
-        Comment existingComment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
+        Comment existingComment = findCommentById(commentId);
         existingComment.setContent(requestDto.getContent());
         return mapper.toResponseDto(commentRepository.save(existingComment));
     }
 
     @Transactional
     public void deleteCommentById(UUID commentId) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
+        Comment comment = findCommentById(commentId);
         commentRepository.delete(comment);
     }
 
@@ -67,5 +67,13 @@ public class CommentService {
     @Transactional
     public void deleteByMovieId(UUID movieId) {
         commentRepository.deleteByMovieId(movieId);
+    }
+
+    private Comment findCommentById (UUID commentId) {
+        return commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
+    }
+
+    private Movie findByMovieId (UUID movieId) {
+        return movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException(movieId));
     }
 }
