@@ -17,4 +17,6 @@ public class CommentResponseDto {
     private UUID userId;
     private String username;
     private String userProfilePhoto;
+    private String movieTitle;
+    private String moviePosterUrl;
 }

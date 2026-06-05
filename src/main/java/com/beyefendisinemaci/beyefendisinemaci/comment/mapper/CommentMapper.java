@@ -12,6 +12,8 @@ public interface CommentMapper {
     @Mapping(source = "user.id",target = "userId")
     @Mapping(source = "user.username",target = "username")
     @Mapping(source = "user.profilePhoto",target = "userProfilePhoto")
+    @Mapping(source = "movie.title", target = "movieTitle")
+    @Mapping(source = "movie.posterUrl", target = "moviePosterUrl")
     CommentResponseDto toResponseDto (Comment comment);
     Comment toEntity (CommentRequestDto requestDto);
 }
