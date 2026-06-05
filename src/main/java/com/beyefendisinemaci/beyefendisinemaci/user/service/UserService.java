@@ -43,13 +43,11 @@ public class UserService {
         User existingUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         if (userRepository.existsByUsernameAndIdNot(request.getUsername(), userId))
             throw new UsernameAlreadyExistsException(request.getUsername());
-        existingUser.setUsername(request.getUsername());
-        existingUser.setFirstName(request.getFirstName());
-        existingUser.setLastName(request.getLastName());
-        existingUser.setProfilePhoto(request.getProfilePhoto());
-        existingUser.setCoverPhoto(request.getCoverPhoto());
+        updateUser(existingUser,request);
         return mapper.toResponseDto(userRepository.save(existingUser));
     }
+
+
 
     @Transactional
     public void changePassword(UUID userId, String oldPassword, String newPassword) {
@@ -78,7 +76,6 @@ public class UserService {
     public User getUserEntity(UUID userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
     }
-
 
     // For admin
 
@@ -110,5 +107,13 @@ public class UserService {
         return userRepository.findByUsernameContainingIgnoreCase(username).stream()
                 .map(mapper::toSearchResponseDto)
                 .toList();
+    }
+
+    private void updateUser(User existingUser, UserUpdateRequest request) {
+        existingUser.setUsername(request.getUsername());
+        existingUser.setFirstName(request.getFirstName());
+        existingUser.setLastName(request.getLastName());
+        existingUser.setProfilePhoto(request.getProfilePhoto());
+        existingUser.setCoverPhoto(request.getCoverPhoto());
     }
 }
