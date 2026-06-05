@@ -34,70 +34,51 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserResponseDto getProfile(UUID userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        User user = findByUserId(userId);
         return mapper.toResponseDto(user);
     }
 
     @Transactional
     public UserResponseDto updateProfile(UserUpdateRequest request, UUID userId) {
-        User existingUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        User existingUser = findByUserId(userId);
         if (userRepository.existsByUsernameAndIdNot(request.getUsername(), userId))
             throw new UsernameAlreadyExistsException(request.getUsername());
-        updateUser(existingUser,request);
+        updateUser(existingUser, request);
         return mapper.toResponseDto(userRepository.save(existingUser));
     }
 
-
-
     @Transactional
     public void changePassword(UUID userId, String oldPassword, String newPassword) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        if (encoder.matches(oldPassword, user.getPassword())) {
-            user.setPassword(encoder.encode(newPassword));
-            userRepository.save(user);
-        } else {
-            throw new PasswordIsIncorrectException();
-        }
+        User user = findByUserId(userId);
+        verifyPassword(oldPassword, user.getPassword());
+        user.setPassword(encoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     @Transactional
     public void deleteAccount(UUID userId, String password) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        if (encoder.matches(password, user.getPassword())) {
-            refreshTokenRepository.deleteByUserId(userId);
-            commentService.deleteByUserId(userId);
-            watchlistService.deleteByUserId(userId);
-            userRepository.delete(user);
-        } else {
-            throw new PasswordIsIncorrectException();
-        }
-    }
-
-    public User getUserEntity(UUID userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        User user = findByUserId(userId);
+        verifyPassword(password, user.getPassword());
+        userDeletion(user);
     }
 
     // For admin
-
     @Transactional
     public void deleteAccountByAdmin(UUID userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        commentService.deleteByUserId(userId);
-        refreshTokenRepository.deleteByUserId(userId);
-        watchlistService.deleteByUserId(userId);
-        userRepository.delete(user);
+        User user = findByUserId(userId);
+        userDeletion(user);
     }
 
     @Transactional
     public void freezeAccount(UUID userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        User user = findByUserId(userId);
         user.setEnabled(!user.isEnabled());
         userRepository.save(user);
     }
 
     @Transactional
     public void changeRole(UUID userId, Role role) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        User user = findByUserId(userId);
         user.setRole(role);
         userRepository.save(user);
     }
@@ -115,5 +96,20 @@ public class UserService {
         existingUser.setLastName(request.getLastName());
         existingUser.setProfilePhoto(request.getProfilePhoto());
         existingUser.setCoverPhoto(request.getCoverPhoto());
+    }
+
+    private User findByUserId(UUID userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+    }
+
+    private void verifyPassword(String rawPassword, String encodedPassword) {
+        if (!encoder.matches(rawPassword, encodedPassword)) throw new PasswordIsIncorrectException();
+    }
+
+    private void userDeletion(User user) {
+        refreshTokenRepository.deleteByUserId(user.getId());
+        commentService.deleteByUserId(user.getId());
+        watchlistService.deleteByUserId(user.getId());
+        userRepository.delete(user);
     }
 }
