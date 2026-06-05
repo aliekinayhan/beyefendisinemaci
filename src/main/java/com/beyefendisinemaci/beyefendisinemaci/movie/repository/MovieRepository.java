@@ -15,8 +15,7 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
     Title -> search in here
     Containing -> like %..%
     */
-    List<Movie> findByTitleContainingIgnoreCase(String title);
-
+    List<Movie> findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(String title);
     boolean existsByTmdbId(Integer tmdbId);
 
     List<Movie> findTop6ByOrderByCreatedAtDesc();

@@ -35,7 +35,7 @@ public class MovieService {
 
     @Transactional(readOnly = true)
     public List<MovieResponseDto> getMovieByTitle(String title) {
-        return movieRepository.findByTitleContainingIgnoreCase(title).stream().map(mapper::toResponseDto).toList();
+        return movieRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title).stream().map(mapper::toResponseDto).toList();
     }
 
     @Transactional(readOnly = true)
