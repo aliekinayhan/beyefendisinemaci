@@ -82,6 +82,7 @@ public class MovieService {
         existingMovie.setReleaseYear(updatedMovie.getReleaseYear());
         existingMovie.setTmdbId(updatedMovie.getTmdbId());
         existingMovie.setReview(updatedMovie.getReview());
+        existingMovie.setOriginalTitle(updatedMovie.getOriginalTitle());
     }
 
     private void deleteMovie (Movie movie) {
