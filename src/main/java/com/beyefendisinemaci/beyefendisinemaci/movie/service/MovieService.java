@@ -39,8 +39,8 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
-    public MovieResponseDto getMovieById(UUID id) {
-        return mapper.toResponseDto(movieRepository.findById(id).orElseThrow(() -> new MovieNotFoundException(id)));
+    public MovieResponseDto getMovieById(UUID movieId) {
+        return mapper.toResponseDto(findByMovieId(movieId));
     }
 
     @Transactional
@@ -52,10 +52,28 @@ public class MovieService {
     }
 
     @Transactional
-    public MovieResponseDto updateMovie(UUID id, MovieRequestDto updatedMovie) {
-        Movie existingMovie = movieRepository.findById(id).orElseThrow(() -> new MovieNotFoundException(id));
-        if (!updatedMovie.getTmdbId().equals(existingMovie.getTmdbId()))
-            throw new TmdbIdMismatchException(updatedMovie.getTmdbId());
+    public MovieResponseDto updateMovie(UUID movieId, MovieRequestDto updatedMovie) {
+        Movie existingMovie = findByMovieId(movieId);
+        updateMovie(updatedMovie,existingMovie);
+        return mapper.toResponseDto(movieRepository.save(existingMovie));
+    }
+
+    @Transactional
+    public void deleteMovieById(UUID movieId) {
+        Movie movie = findByMovieId(movieId);
+        deleteMovie(movie);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MovieResponseDto> getRecentMovies() {
+        return movieRepository.findTop6ByOrderByCreatedAtDesc().stream().map(mapper::toResponseDto).toList();
+    }
+
+    private Movie findByMovieId(UUID movieId) {
+        return movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException(movieId));
+    }
+
+    private void updateMovie(MovieRequestDto updatedMovie, Movie existingMovie) {
         existingMovie.setTitle(updatedMovie.getTitle());
         existingMovie.setPosterUrl(updatedMovie.getPosterUrl());
         existingMovie.setShortVideoUrl(updatedMovie.getShortVideoUrl());
@@ -64,23 +82,11 @@ public class MovieService {
         existingMovie.setReleaseYear(updatedMovie.getReleaseYear());
         existingMovie.setTmdbId(updatedMovie.getTmdbId());
         existingMovie.setReview(updatedMovie.getReview());
-        return mapper.toResponseDto(movieRepository.save(existingMovie));
     }
 
-    @Transactional
-    public void deleteMovieById(UUID movieId) {
-        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException(movieId));
-        commentService.deleteByMovieId(movieId);
-        watchlistService.deleteByMovieId(movieId);
+    private void deleteMovie (Movie movie) {
+        commentService.deleteByMovieId(movie.getId());
+        watchlistService.deleteByMovieId(movie.getId());
         movieRepository.delete(movie);
-    }
-
-    @Transactional(readOnly = true)
-    public List<MovieResponseDto> getRecentMovies() {
-        return movieRepository.findTop6ByOrderByCreatedAtDesc().stream().map(mapper::toResponseDto).toList();
-    }
-
-    public Movie getMovieEntity(UUID movieId) {
-        return movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException(movieId));
     }
 }
