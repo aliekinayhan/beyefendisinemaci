@@ -26,4 +26,5 @@ public class MovieRequestDto {
     private Integer tmdbId;
     @NotBlank
     private String review;
+    private String originalTitle;
 }

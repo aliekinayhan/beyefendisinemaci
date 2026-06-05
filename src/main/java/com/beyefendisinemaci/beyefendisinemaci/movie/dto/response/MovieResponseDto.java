@@ -23,4 +23,5 @@ public class MovieResponseDto {
     private String genre;
     private Integer releaseYear;
     private String review;
+    private String originalTitle;
 }

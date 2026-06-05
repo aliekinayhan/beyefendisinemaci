@@ -35,7 +35,7 @@ public class TmdbService {
 
     public List<TmdbMovieDto> searchMovies(String query) {
         TmdbSearchResponse response = restClient.get()
-                .uri("https://api.themoviedb.org/3/search/movie?query={query}&api_key={apiKey}&language=tr-TR", query, apiKey)
+                .uri("https://api.themoviedb.org/3/search/movie?query={query}&api_key={apiKey}&language=en-US", query, apiKey)
                 .retrieve()
                 .body(TmdbSearchResponse.class);
 
@@ -46,6 +46,7 @@ public class TmdbService {
                         .releaseYear(movie.getReleaseDate() != null && !movie.getReleaseDate().isEmpty()
                                 ? movie.getReleaseDate().substring(0, 4)
                                 : null)
+                        .originalTitle(movie.getOriginalTitle())
                         .build())
                 .toList();
     }
@@ -65,6 +66,8 @@ public class TmdbService {
         private String posterPath;
         @JsonProperty("release_date")
         private String releaseDate;
+        @JsonProperty("original_title")
+        private String originalTitle;
     }
 }
 

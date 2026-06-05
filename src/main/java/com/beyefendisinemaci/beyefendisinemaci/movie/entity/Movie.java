@@ -28,6 +28,7 @@ public class Movie {
     private String videoUrl;
     private String genre;
     private Integer releaseYear;
+    private String originalTitle;
     private Integer tmdbId;
     @Column(columnDefinition = "TEXT")
     private String review;
