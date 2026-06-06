@@ -27,7 +27,7 @@ public class MovieController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<MovieResponseDto>> getMovieByTitle(@RequestParam String q) {
+    public ResponseEntity<List<MovieResponseDto>> getMovieByTitle(@RequestParam(defaultValue = "") String q) {
         return ResponseEntity.ok(service.getMovieByTitle(q));
     }
 
@@ -53,7 +53,7 @@ public class MovieController {
     }
 
     @GetMapping("/recent")
-    public ResponseEntity<List<MovieResponseDto>> recentMovies () {
+    public ResponseEntity<List<MovieResponseDto>> recentMovies() {
         return ResponseEntity.ok(service.getRecentMovies());
     }
 
