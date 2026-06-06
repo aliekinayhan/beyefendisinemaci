@@ -63,6 +63,7 @@ public class MovieService {
         if (movieRepository.existsByTmdbId(movie.getTmdbId())) {
             throw new DuplicateMovieException(movie.getTmdbId());
         }
+        redisSearchService.evictAllSearchCache();
         return mapper.toResponseDto(movieRepository.save(mapper.toEntity(movie)));
     }
 
@@ -76,6 +77,7 @@ public class MovieService {
     @Transactional
     public void deleteMovieById(UUID movieId) {
         Movie movie = findByMovieId(movieId);
+        redisSearchService.evictAllSearchCache();
         deleteMovie(movie);
     }
 

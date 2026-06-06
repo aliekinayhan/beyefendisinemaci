@@ -41,4 +41,11 @@ public class RedisSearchService {
         String key = SEARCH_CACHE_PREFIX + query.toLowerCase().trim();
         return (List<MovieResponseDto>) objectRedisTemplate.opsForValue().get(key);
     }
+
+    public void evictAllSearchCache() {
+        Set<String> keys = objectRedisTemplate.keys(SEARCH_CACHE_PREFIX + "*");
+        if (keys != null && !keys.isEmpty()) {
+            objectRedisTemplate.delete(keys);
+        }
+    }
 }
