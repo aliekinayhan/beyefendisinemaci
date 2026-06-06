@@ -18,7 +18,7 @@ public class RedisSearchService {
     private final RedisTemplate<String, Object> objectRedisTemplate;
 
     private static final String KEY = "trending:searches";
-    private static final String SEARCH_CACHE_PREFIX = "search:";
+    private static final String SEARCH_CACHE_PREFIX = "movie-search:";
 
     public void recordSearch(String query) {
         String term = query.toLowerCase().trim();
