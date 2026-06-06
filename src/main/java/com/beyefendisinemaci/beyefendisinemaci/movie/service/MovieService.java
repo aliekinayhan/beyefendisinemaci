@@ -37,7 +37,20 @@ public class MovieService {
     @Transactional(readOnly = true)
     public List<MovieResponseDto> getMovieByTitle(String title) {
         redisSearchService.recordSearch(title);
-        return movieRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title).stream().map(mapper::toResponseDto).toList();
+
+        List<MovieResponseDto> cached = redisSearchService.getCachedSearchResult(title);
+        if (cached != null) {
+            return cached;
+        }
+
+        List<MovieResponseDto> results = movieRepository
+                .findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title)
+                .stream()
+                .map(mapper::toResponseDto)
+                .toList();
+
+        redisSearchService.cacheSearchResult(title, results);
+        return results;
     }
 
     @Transactional(readOnly = true)
@@ -56,7 +69,7 @@ public class MovieService {
     @Transactional
     public MovieResponseDto updateMovie(UUID movieId, MovieRequestDto updatedMovie) {
         Movie existingMovie = findByMovieId(movieId);
-        updateMovie(updatedMovie,existingMovie);
+        updateMovie(updatedMovie, existingMovie);
         return mapper.toResponseDto(movieRepository.save(existingMovie));
     }
 
@@ -87,7 +100,7 @@ public class MovieService {
         existingMovie.setOriginalTitle(updatedMovie.getOriginalTitle());
     }
 
-    private void deleteMovie (Movie movie) {
+    private void deleteMovie(Movie movie) {
         commentService.deleteByMovieId(movie.getId());
         watchlistService.deleteByMovieId(movie.getId());
         movieRepository.delete(movie);

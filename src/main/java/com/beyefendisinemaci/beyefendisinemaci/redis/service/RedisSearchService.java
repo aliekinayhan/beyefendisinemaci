@@ -1,5 +1,6 @@
 package com.beyefendisinemaci.beyefendisinemaci.redis.service;
 
+import com.beyefendisinemaci.beyefendisinemaci.movie.dto.response.MovieResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,10 @@ import java.util.concurrent.TimeUnit;
 public class RedisSearchService {
 
     private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, Object> objectRedisTemplate;
 
     private static final String KEY = "trending:searches";
+    private static final String SEARCH_CACHE_PREFIX = "search:";
 
     public void recordSearch(String query) {
         String term = query.toLowerCase().trim();
@@ -26,5 +29,16 @@ public class RedisSearchService {
     public List<String> getTrendingSearches() {
         Set<String> results = redisTemplate.opsForZSet().reverseRange(KEY, 0, 9);
         return results != null ? new ArrayList<>(results) : new ArrayList<>();
+    }
+
+    public void cacheSearchResult(String query, List<MovieResponseDto> results) {
+        String key = SEARCH_CACHE_PREFIX + query.toLowerCase().trim();
+        objectRedisTemplate.opsForValue().set(key, results, 1, TimeUnit.HOURS);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<MovieResponseDto> getCachedSearchResult(String query) {
+        String key = SEARCH_CACHE_PREFIX + query.toLowerCase().trim();
+        return (List<MovieResponseDto>) objectRedisTemplate.opsForValue().get(key);
     }
 }
