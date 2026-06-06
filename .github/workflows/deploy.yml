@@ -1,37 +1,37 @@
 name: Deploy Backend
-
 on:
   push:
     branches:
       - main
-
 env:
   IMAGE_TAG: latest
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ${{ secrets.ECR_REGION }}
-
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-
       - name: Build and push Docker image
         run: |
           docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.ECR_REGION }}.amazonaws.com/${{ secrets.ECR_REPO }}:${{ env.IMAGE_TAG }} .
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.ECR_REGION }}.amazonaws.com/${{ secrets.ECR_REPO }}:${{ env.IMAGE_TAG }}
-
+      - name: Copy docker-compose to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "docker-compose.yml"
+          target: "/home/ubuntu/"
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -40,24 +40,19 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             aws ecr get-login-password --region ${{ secrets.ECR_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.ECR_REGION }}.amazonaws.com
-
-            docker stop beyefendi-backend || true
-            docker rm beyefendi-backend || true
-
-            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.ECR_REGION }}.amazonaws.com/${{ secrets.ECR_REPO }}:latest
-
-            docker run -d \
-              --name beyefendi-backend \
-              --restart always \
-              -p 8080:8080 \
-              -e DB_URL="${{ secrets.DB_URL }}" \
-              -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
-              -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
-              -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
-              -e AWS_ACCESS_KEY="${{ secrets.AWS_ACCESS_KEY }}" \
-              -e AWS_SECRET_KEY="${{ secrets.AWS_SECRET_KEY }}" \
-              -e AWS_BUCKET_NAME="${{ secrets.AWS_BUCKET_NAME }}" \
-              -e AWS_REGION="${{ secrets.AWS_REGION }}" \
-              -e CLOUDFRONT_URL="${{ secrets.CLOUDFRONT_URL }}" \
-              -e TMDB_API_KEY="${{ secrets.TMDB_API_KEY }}" \
-              ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.ECR_REGION }}.amazonaws.com/${{ secrets.ECR_REPO }}:latest
+            
+            export DB_URL="${{ secrets.DB_URL }}"
+            export DB_USERNAME="${{ secrets.DB_USERNAME }}"
+            export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+            export JWT_SECRET="${{ secrets.JWT_SECRET }}"
+            export AWS_ACCESS_KEY="${{ secrets.AWS_ACCESS_KEY }}"
+            export AWS_SECRET_KEY="${{ secrets.AWS_SECRET_KEY }}"
+            export AWS_BUCKET_NAME="${{ secrets.AWS_BUCKET_NAME }}"
+            export AWS_REGION="${{ secrets.AWS_REGION }}"
+            export CLOUDFRONT_URL="${{ secrets.CLOUDFRONT_URL }}"
+            export TMDB_API_KEY="${{ secrets.TMDB_API_KEY }}"
+            export APP_IMAGE=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.ECR_REGION }}.amazonaws.com/${{ secrets.ECR_REPO }}:latest
+            
+            docker compose -f /home/ubuntu/docker-compose.yml down
+            docker compose -f /home/ubuntu/docker-compose.yml pull
+            docker compose -f /home/ubuntu/docker-compose.yml up -d
