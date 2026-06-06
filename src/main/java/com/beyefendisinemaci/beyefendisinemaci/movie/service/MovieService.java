@@ -54,6 +54,15 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
+    public List<MovieResponseDto> getMovieByTitle2(String title) {
+        return movieRepository
+                .findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title)
+                .stream()
+                .map(mapper::toResponseDto)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public MovieResponseDto getMovieById(UUID movieId) {
         return mapper.toResponseDto(findByMovieId(movieId));
     }
@@ -107,6 +116,7 @@ public class MovieService {
         watchlistService.deleteByMovieId(movie.getId());
         movieRepository.delete(movie);
     }
+
 
     //REDIS
     public List<String> getTrendingSearches() {

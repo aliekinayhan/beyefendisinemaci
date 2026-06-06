@@ -31,6 +31,11 @@ public class MovieController {
         return ResponseEntity.ok(service.getMovieByTitle(q));
     }
 
+    @GetMapping("/searching")
+    public ResponseEntity<List<MovieResponseDto>> getMovieByTitle2(@RequestParam(defaultValue = "") String q) {
+        return ResponseEntity.ok(service.getMovieByTitle(q));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MovieResponseDto> getMovieById(@PathVariable UUID id) {
         return ResponseEntity.ok(service.getMovieById(id));
