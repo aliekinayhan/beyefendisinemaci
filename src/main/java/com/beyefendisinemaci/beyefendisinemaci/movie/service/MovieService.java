@@ -6,11 +6,8 @@ import com.beyefendisinemaci.beyefendisinemaci.movie.dto.response.MovieResponseD
 import com.beyefendisinemaci.beyefendisinemaci.movie.entity.Movie;
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.DuplicateMovieException;
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.MovieNotFoundException;
-import com.beyefendisinemaci.beyefendisinemaci.movie.exception.TmdbIdMismatchException;
 import com.beyefendisinemaci.beyefendisinemaci.movie.mapper.MovieMapper;
 import com.beyefendisinemaci.beyefendisinemaci.movie.repository.MovieRepository;
-import com.beyefendisinemaci.beyefendisinemaci.tmdb.dto.TmdbMovieDto;
-import com.beyefendisinemaci.beyefendisinemaci.tmdb.service.TmdbService;
 import com.beyefendisinemaci.beyefendisinemaci.watchlist.service.WatchlistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,7 +26,6 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final CommentService commentService;
     private final WatchlistService watchlistService;
-    private final TmdbService tmdbService;
 
     @Transactional(readOnly = true)
     public Page<MovieResponseDto> getAllMovies(Pageable pageable) {
@@ -94,20 +90,4 @@ public class MovieService {
         movieRepository.delete(movie);
     }
 
-    @Transactional
-    public void syncAllMoviesFromTmdb() {
-        List<Movie> movies = movieRepository.findAll();
-        for (Movie movie : movies) {
-            try {
-                TmdbMovieDto tmdbMovie = tmdbService.getMovieById(movie.getTmdbId());
-                movie.setTitle(tmdbMovie.getTitle());
-                movie.setPosterUrl(tmdbMovie.getPosterUrl());
-                movie.setOriginalTitle(tmdbMovie.getOriginalTitle());
-                movieRepository.save(movie);
-            } catch (Exception e) {
-                // bir film hata verse bile devam et
-                System.out.println("Film güncellenemedi: " + movie.getTmdbId());
-            }
-        }
-    }
 }

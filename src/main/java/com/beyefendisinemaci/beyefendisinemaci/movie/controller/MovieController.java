@@ -57,9 +57,5 @@ public class MovieController {
         return ResponseEntity.ok(service.getRecentMovies());
     }
 
-    @PostMapping("/sync-tmdb")
-    public ResponseEntity<Void> syncAllMoviesFromTmdb() {
-        service.syncAllMoviesFromTmdb();
-        return ResponseEntity.ok().build();
-    }
+
 }
