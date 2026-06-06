@@ -67,21 +67,26 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Options
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/s3/upload/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/s3/upload/presigned-url/**").authenticated()
                         // Public
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/movies/recent").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/movies/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/movies/*/comments").permitAll()
-
+                        .requestMatchers(HttpMethod.GET, "/api/movies/search").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/movies/trending-searches").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/movies").permitAll()
+                        // Authenticated
                         .requestMatchers(HttpMethod.POST, "/api/movies/*/comments").authenticated()
-                        // Admin
+                        .requestMatchers(HttpMethod.GET, "/api/s3/upload/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/s3/upload/presigned-url/**").authenticated()
                         .requestMatchers("/api/s3/upload/profile-photo").authenticated()
                         .requestMatchers("/api/s3/upload/cover-photo").authenticated()
+                        // Admin
                         .requestMatchers("/api/s3/upload/video-long").hasAuthority("ADMIN")
-                        .requestMatchers("/api/s3/upload/video-short").hasAuthority("ADMIN").requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/s3/upload/video-short").hasAuthority("ADMIN")
+                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/tmdb/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/s3/upload/presigned-url/video-long").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/s3/upload/presigned-url/video-short").hasAuthority("ADMIN")
