@@ -69,6 +69,20 @@ public class TmdbService {
         @JsonProperty("original_title")
         private String originalTitle;
     }
+
+    public TmdbMovieDto getMovieById(Integer tmdbId) {
+        TmdbMovieResult movie = restClient.get()
+                .uri("https://api.themoviedb.org/3/movie/{tmdbId}?api_key={apiKey}&language=en-US", tmdbId, apiKey)
+                .retrieve()
+                .body(TmdbMovieResult.class);
+
+        return TmdbMovieDto.builder()
+                .tmdbId(movie.getId())
+                .title(movie.getTitle())
+                .posterUrl("https://image.tmdb.org/t/p/w500" + movie.getPosterPath())
+                .originalTitle(movie.getOriginalTitle())
+                .build();
+    }
 }
 
 

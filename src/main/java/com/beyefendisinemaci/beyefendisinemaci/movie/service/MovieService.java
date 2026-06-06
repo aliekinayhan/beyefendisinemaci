@@ -9,6 +9,7 @@ import com.beyefendisinemaci.beyefendisinemaci.movie.exception.MovieNotFoundExce
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.TmdbIdMismatchException;
 import com.beyefendisinemaci.beyefendisinemaci.movie.mapper.MovieMapper;
 import com.beyefendisinemaci.beyefendisinemaci.movie.repository.MovieRepository;
+import com.beyefendisinemaci.beyefendisinemaci.tmdb.dto.TmdbMovieDto;
 import com.beyefendisinemaci.beyefendisinemaci.watchlist.service.WatchlistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -89,5 +90,22 @@ public class MovieService {
         commentService.deleteByMovieId(movie.getId());
         watchlistService.deleteByMovieId(movie.getId());
         movieRepository.delete(movie);
+    }
+
+    @Transactional
+    public void syncAllMoviesFromTmdb() {
+        List<Movie> movies = movieRepository.findAll();
+        for (Movie movie : movies) {
+            try {
+                TmdbMovieDto tmdbMovie = tmdbService.getMovieById(movie.getTmdbId());
+                movie.setTitle(tmdbMovie.getTitle());
+                movie.setPosterUrl(tmdbMovie.getPosterUrl());
+                movie.setOriginalTitle(tmdbMovie.getOriginalTitle());
+                movieRepository.save(movie);
+            } catch (Exception e) {
+                // bir film hata verse bile devam et
+                System.out.println("Film güncellenemedi: " + movie.getTmdbId());
+            }
+        }
     }
 }
