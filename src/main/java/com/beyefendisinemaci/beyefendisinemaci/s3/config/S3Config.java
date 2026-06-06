@@ -1,4 +1,4 @@
-package com.beyefendisinemaci.beyefendisinemaci.config;
+package com.beyefendisinemaci.beyefendisinemaci.s3.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
