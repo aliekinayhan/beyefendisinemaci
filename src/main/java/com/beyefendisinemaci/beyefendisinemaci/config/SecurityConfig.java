@@ -2,6 +2,7 @@ package com.beyefendisinemaci.beyefendisinemaci.config;
 
 import com.beyefendisinemaci.beyefendisinemaci.config.ratelimit.AuthenticatedRateLimit;
 import com.beyefendisinemaci.beyefendisinemaci.config.ratelimit.S3RateLimitFilter;
+import com.beyefendisinemaci.beyefendisinemaci.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

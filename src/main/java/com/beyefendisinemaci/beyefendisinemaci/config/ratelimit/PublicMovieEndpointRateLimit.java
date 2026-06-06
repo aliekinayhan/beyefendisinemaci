@@ -1,6 +1,6 @@
 package com.beyefendisinemaci.beyefendisinemaci.config.ratelimit;
 
-import com.beyefendisinemaci.beyefendisinemaci.config.JwtUtil;
+import com.beyefendisinemaci.beyefendisinemaci.jwt.JwtUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import io.github.bucket4j.Bandwidth;

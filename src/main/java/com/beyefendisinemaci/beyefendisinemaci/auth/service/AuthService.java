@@ -10,7 +10,7 @@ import com.beyefendisinemaci.beyefendisinemaci.auth.exception.InvalidRefreshToke
 import com.beyefendisinemaci.beyefendisinemaci.auth.exception.RefreshTokenExpiredException;
 import com.beyefendisinemaci.beyefendisinemaci.auth.exception.UsernameAlreadyExistsException;
 import com.beyefendisinemaci.beyefendisinemaci.auth.repository.RefreshTokenRepository;
-import com.beyefendisinemaci.beyefendisinemaci.config.JwtUtil;
+import com.beyefendisinemaci.beyefendisinemaci.jwt.JwtUtil;
 import com.beyefendisinemaci.beyefendisinemaci.user.entity.Role;
 import com.beyefendisinemaci.beyefendisinemaci.user.entity.User;
 import com.beyefendisinemaci.beyefendisinemaci.user.repository.UserRepository;

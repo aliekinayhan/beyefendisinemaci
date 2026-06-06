@@ -1,4 +1,4 @@
-package com.beyefendisinemaci.beyefendisinemaci.config;
+package com.beyefendisinemaci.beyefendisinemaci.jwt;
 
 import com.beyefendisinemaci.beyefendisinemaci.user.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
