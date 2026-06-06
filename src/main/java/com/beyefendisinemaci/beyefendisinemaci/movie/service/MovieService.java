@@ -36,7 +36,6 @@ public class MovieService {
 
     @Transactional(readOnly = true)
     public List<MovieResponseDto> getMovieByTitle(String title) {
-        redisSearchService.recordSearch(title);
 
         List<MovieResponseDto> cached = redisSearchService.getCachedSearchResult(title);
         if (cached != null) {
@@ -54,7 +53,7 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
-    public List<MovieResponseDto> getMovieByTitle2(String title) {
+    public List<MovieResponseDto> searchMoviesAdmin (String title) {
         return movieRepository
                 .findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title)
                 .stream()
@@ -117,9 +116,4 @@ public class MovieService {
         movieRepository.delete(movie);
     }
 
-
-    //REDIS
-    public List<String> getTrendingSearches() {
-        return redisSearchService.getTrendingSearches();
-    }
 }

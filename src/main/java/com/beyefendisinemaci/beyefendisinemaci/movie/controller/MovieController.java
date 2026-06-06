@@ -31,9 +31,9 @@ public class MovieController {
         return ResponseEntity.ok(service.getMovieByTitle(q));
     }
 
-    @GetMapping("/searching")
+    @GetMapping("/admin/search")
     public ResponseEntity<List<MovieResponseDto>> getMovieByTitle2(@RequestParam(defaultValue = "") String q) {
-        return ResponseEntity.ok(service.getMovieByTitle(q));
+        return ResponseEntity.ok(service.searchMoviesAdmin(q));
     }
 
     @GetMapping("/{id}")
@@ -60,12 +60,6 @@ public class MovieController {
     @GetMapping("/recent")
     public ResponseEntity<List<MovieResponseDto>> recentMovies() {
         return ResponseEntity.ok(service.getRecentMovies());
-    }
-
-    //REDIS
-    @GetMapping("/trending-searches")
-    public ResponseEntity<List<String>> getTrendingSearches() {
-        return ResponseEntity.ok(service.getTrendingSearches());
     }
 
 
