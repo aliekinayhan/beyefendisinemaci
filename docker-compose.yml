@@ -1,28 +1,20 @@
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: beyefendisinemaci-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: beyefendisinemaci
+  redis:
+    image: redis:7-alpine
+    container_name: beyefendisinemaci-redis
     ports:
-      - "3307:3306"
+      - "6379:6379"
     volumes:
-      - mysql-data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - redis-data:/data
 
   app:
-    build: .
+    image: ${APP_IMAGE}
     container_name: beyefendisinemaci-app
     ports:
       - "8080:8080"
     environment:
-      DB_URL: jdbc:mysql://mysql:3306/beyefendisinemaci
-      DB_USERNAME: root
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       TMDB_API_KEY: ${TMDB_API_KEY}
@@ -32,8 +24,7 @@ services:
       AWS_REGION: ${AWS_REGION}
       CLOUDFRONT_URL: ${CLOUDFRONT_URL}
     depends_on:
-      mysql:
-        condition: service_healthy
+      - redis
 
 volumes:
-  mysql-data:
+  redis-data:
