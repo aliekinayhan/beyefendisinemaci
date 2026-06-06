@@ -57,5 +57,11 @@ public class MovieController {
         return ResponseEntity.ok(service.getRecentMovies());
     }
 
+    //REDIS
+    @GetMapping("/trending-searches")
+    public ResponseEntity<List<String>> getTrendingSearches() {
+        return ResponseEntity.ok(service.getTrendingSearches());
+    }
+
 
 }

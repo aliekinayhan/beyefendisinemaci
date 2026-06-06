@@ -8,6 +8,7 @@ import com.beyefendisinemaci.beyefendisinemaci.movie.exception.DuplicateMovieExc
 import com.beyefendisinemaci.beyefendisinemaci.movie.exception.MovieNotFoundException;
 import com.beyefendisinemaci.beyefendisinemaci.movie.mapper.MovieMapper;
 import com.beyefendisinemaci.beyefendisinemaci.movie.repository.MovieRepository;
+import com.beyefendisinemaci.beyefendisinemaci.redis.service.RedisSearchService;
 import com.beyefendisinemaci.beyefendisinemaci.watchlist.service.WatchlistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final CommentService commentService;
     private final WatchlistService watchlistService;
+    private final RedisSearchService redisSearchService;
 
     @Transactional(readOnly = true)
     public Page<MovieResponseDto> getAllMovies(Pageable pageable) {
@@ -34,6 +36,7 @@ public class MovieService {
 
     @Transactional(readOnly = true)
     public List<MovieResponseDto> getMovieByTitle(String title) {
+        redisSearchService.recordSearch(title);
         return movieRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title).stream().map(mapper::toResponseDto).toList();
     }
 
@@ -90,4 +93,8 @@ public class MovieService {
         movieRepository.delete(movie);
     }
 
+    //REDIS
+    public List<String> getTrendingSearches() {
+        return redisSearchService.getTrendingSearches();
+    }
 }

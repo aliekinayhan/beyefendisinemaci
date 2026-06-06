@@ -1,4 +1,4 @@
-package com.beyefendisinemaci.beyefendisinemaci.config;
+package com.beyefendisinemaci.beyefendisinemaci.redis.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
