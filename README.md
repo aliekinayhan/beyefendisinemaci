@@ -8,11 +8,11 @@ https://beyefendisinemaci.com
 
 ## Tech Stack
 
-**Backend:** Java, Spring Boot, Spring Security, JWT, Hibernate, MySQL
+**Backend:** Java, Spring Boot, Spring Security, JWT, Hibernate, MySQL, Redis, Bucket4j
 
-**Frontend:** React, Vite
+**Frontend:** React, Html, CSS
 
-**DevOps & Cloud:** Docker, AWS EC2, AWS RDS, AWS S3, AWS CloudFront
+**DevOps & Cloud:** Docker, AWS EC2, AWS ECR, AWS RDS, AWS S3, AWS CloudFront
 
 ## Features
 
